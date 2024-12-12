@@ -1,0 +1,162 @@
+---
+title: "Project"
+author: "Osama Mufti"
+date: "2024-12-12"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+/*
+
+Project: Data211
+
+According to the "Alarming Average Screen Time Statistics (2024). The average American spend 7hours and 3 minutes looking at a screen each day. In this project I will be performing T-test to compare the average screen time with my daily usage of screen time.
+
+*/
+
+
+```{r libraries}
+library(tidyr)
+library(ggplot2)
+library(readxl)
+```
+
+
+
+```{r}
+#Importing the data of 14days 
+
+screen_time <- c(
+  8 + 35/60,   # Day 1
+  6 + 49/60,   # Day 2
+  11 + 40/60,  # Day 3
+  9 + 20/60,   # Day 4
+  7 + 2/60,    # Day 5
+  6 + 11/60,   # Day 6
+  10 + 54/60,  # Day 7
+  6 + 4/60,    # Day 8
+  8 + 24/60,   # Day 9
+  7 + 7/60,    # Day 10
+  7 + 17/60,   # Day 11
+  8 + 28/60,   # Day 12
+  8 + 54/60,   # Day 13
+  7 + 41/60    # Day 14
+)
+
+#Creating a data frame
+
+days <- paste("Day", 1:14)
+
+data <- data.frame(Day = days, ScreenTime_Hours = screen_time)
+
+data
+```
+
+
+#Step:3 Performing the Calculate Descriptive Statistics
+
+```{r}
+
+# Calculating the mean
+
+mean_screen_time <- mean(screen_time)
+
+
+# Calculating the Median
+
+median_screen_time <- median(screen_time)
+
+#Standard Deviation
+
+std_screen_time<- sd(screen_time)
+
+
+# Display the results
+cat("Mean Screen Time:", round(mean_screen_time, 2), "hours\n")
+cat("Median Screen Time:", round(median_screen_time, 2), "hours\n")
+cat("Standard Deviation:", round(std_screen_time, 2), "hours\n")
+
+```
+
+
+
+#Step: 3
+
+/*
+
+Research Question:
+
+Is my average daily Screen time significantly different from the average American's screen time of 7.05 hours"?
+
+Null and Alternative Hypotheses:
+
+~Null Hypothesis $(H_0)$: The mean daily screen time is equal to 7.05 hours ($\mu =7.05$)
+
+~Alternative Hypothesis $(H_1)$: The mean daily screen time is not equal to 7.05 hours ($\mu =7.05$ )
+
+
+*/
+
+##Step:4
+/*
+Perform a Two-Tailed T-Test
+Since our sample size is small (n=14) a t-test is best
+*/
+```{r}
+# Perform the t-test
+t_test <- t.test(screen_time, mu = 7.05, alternative = "two.sided")
+
+# Display the t-test results
+print(t_test)
+
+```
+
+/*
+The p-value(0.02445) is less than the significance level $(a=0.05)$
+
+Decision: Reject the null Hypothesis
+
+There is statistically significant evidence to concluded that your average daily screen time is different from 7.05 hours
+*/
+
+
+
+##Step: 6 Visualize Your Data
+
+```{r}
+#a: Line Graph of Daily Screen Time
+
+data$DayIndex<-1:14
+
+ggplot(data, aes(x = DayIndex, y = ScreenTime_Hours, group =1))+
+  geom_line(color="blue")+
+  geom_point(color="blue")+
+  geom_hline(yintercept = 7.05, linetype= "dashed", color ="red")+
+   scale_x_continuous(breaks = 1:14, labels = paste("Day", 1:14)) +
+  labs(title = "Daily Screen Time Over Two Weeks", x="Day", y ="Screen Time (Hours)")+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle =45, hjust=1))
+
+```
+
+##b: Histogram of Screen Time Distribution
+
+```{r}
+# Histogram with updated `linewidth` argument
+ggplot(data, aes(x = ScreenTime_Hours)) +
+  geom_histogram(bins = 6, fill = "cyan", color = "black", alpha = 0.7) +
+  geom_vline(xintercept = mean_screen_time, linetype = "dashed", color = "blue", linewidth = 1) +
+  geom_vline(xintercept = 7.05, linetype = "dashed", color = "red", linewidth = 1) +
+  labs(title = "Distribution of Daily Screen Time",
+       x = "Screen Time (Hours)",
+       y = "Frequency") +
+  theme_minimal()
+
+```
+
+
+```
+
